@@ -79,8 +79,36 @@ def max_scalar_product(v1, v2)
 end  
 
 #Max span
-def max_span(numbers)
+def span(numbers, number) # not working do later
+  number_encountered = false
+  span, current_span = 0, 0
 
+  numbers.each do |num|
+    if num == number 
+      if number_encountered
+        current_span += 1
+        span = current_span
+      else
+        number_encountered = true
+        span, current_span = 1, 1
+      end
+    end
+
+    current_span += 1 if number_encountered and num != number
+  end
+
+  span
+end
+
+def max_span(numbers)
+  check_list = numbers.uniq
+  max_span = 0
+
+  check_list.each do |num|
+    max_span = span(numbers, num) if span(numbers, num) > max_span
+  end
+
+  max_span
 end
 
 #Sum numbers in matrix
@@ -145,5 +173,37 @@ def matrix_bombing_plan(m)
   plan
 end
 
-matrx = [[1,2,3], [4,5,6], [7,8,9]]
-puts matrix_bombing_plan matrx
+#Group function
+def group(array)
+  result = [[array[0]]]
+
+  array.each do |el|
+    last_sub_array = result[result.length - 1]
+    if last_sub_array.include? el
+      last_sub_array << el
+    else
+      result << [el]
+    end
+  end
+
+  result
+end
+
+#Longest subsequence of equal consecutive elements
+def max_consecutive(items)
+  longest_consecutive = 0
+  curr_consecutive = 0
+
+  (1...items.length).each do |index|
+    if items[index - 1] == items[index]
+      curr_consecutive += 1
+      longest_consecutive = curr_consecutive if curr_consecutive > longest_consecutive
+    else
+      curr_consecutive = 1
+    end
+  end
+
+  longest_consecutive
+end
+
+puts max_span [1, 2, 1, 1, 3]
