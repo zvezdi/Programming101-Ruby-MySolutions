@@ -1,53 +1,25 @@
 class Hash
 
   def pick(*keys)
-    Hash.new.tap do 
-      keys.each do |key|
-        new_hash[key] = fetch(key) if has_key? key
-      end
-    end
+    select { |key, value| keys.include? key }
   end
 
   def except(*keys)
-    new_hash = {}
-    each do |key, value|
-      new_hash[key] = value unless keys.include? key
-    end
-
-    new_hash
+    reject { |key, value| keys.include? key }
   end
 
   def compact_values
-    new_hash = {}
-    each do |key, value|
-      new_hash[key] = value if value
-    end
-
-    new_hash
+    select { |key, value| value }
   end
 
   def defaults(hash)
-    new_hash = {}
-
-    each do |key, value|
-      new_hash[key] = value
-    end
-
-    hash.each do |key, value|
-        new_hash[key] = value unless new_hash.has_key? key
-    end
-
-    new_hash
+    hash.merge(self).sort.to_h
   end
 
   def pick!(*keys)
-    #select! { |key, value| keys.include? key }
-
-    #self
-
     self.replace pick(*keys)
   end
 
 end
 
-puts ({a: 1, b: 2, c: 3}.pick(:a, :b))
+p({a: 1, b: 2}.defaults(a: 4, c: 3))
