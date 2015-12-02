@@ -13,6 +13,10 @@ class Hash
   end
 
   def defaults(hash)
+    #merge saves all elements in self and adds to them the elements 
+    #in hash without replacing the values of already exsisting keys
+    #I expected it works the other way around - saves the values of the hash
+    #that it's called on and add new keys from the hash passed as parameter
     hash.merge(self).sort.to_h
   end
 
@@ -21,5 +25,3 @@ class Hash
   end
 
 end
-
-p({a: 1, b: 2}.defaults(a: 4, c: 3))
