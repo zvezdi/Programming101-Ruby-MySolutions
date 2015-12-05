@@ -1,32 +1,36 @@
 # Implementation of our own Enumerable class
 module MyEnumerable
   def map
-    Array.new.tap do |array|
-      each do |element|
-        value = yield element
-        array << value
+    if block_given?
+      [].tap do |array|
+        each do |element|
+          value = yield element
+          array << value
+        end
       end
+    else
+      enum_for :map #method that takes a block
     end
   end
 
   def filter
-    Array.new.tap do |array|
+    return enum_for :filter unless block_given?
+    [].tap do |array|
       each { |element| array << element if yield element }
     end
   end
 
   def reject
-    Array.new.tap do |array|
+    return enum_for :reject unless block_given?
+    [].tap do |array|
       each { |element| array << element unless yield element }
     end
   end
 
   def reduce(initial = nil)
+    return enum_for :reduce unless block_given?
     skip_first = false
-    if initial.nil?
-      initial = first
-      skip_first = true
-    end
+    initial, skip_first = first, true if initial.nil?
 
     each do |element|
       if skip_first
@@ -40,24 +44,16 @@ module MyEnumerable
     initial
   end
 
-  def any?
-    each { |element| return true if yield element }
-
-    false
+  def any?(&block)
+    (filter &block).size > 0
   end
 
-  def all?
-    each { |element| return false unless yield element }
-
-    true
+  def all?(&block)
+    (filter &block).size == size
   end
 
   def include?(element)
-    each do |el|
-      return true if el == element
-    end
-
-    false
+    any? { |el| el == element }
   end
 
   def count(element = nil)
@@ -121,13 +117,13 @@ module MyEnumerable
   end
 
   def take(n)
-    Array.new.tap do |first_n|
+    [].tap do |first_n|
       each { |el| first_n << el if first_n.size < n }
     end
   end
 
   def take_while
-    Array.new.tap do |result|
+    [].tap do |result|
       each do |el|
         break unless yield el
         result << el
@@ -136,7 +132,7 @@ module MyEnumerable
   end
 
   def drop(n = 1)
-    Array.new.tap do |result|
+    [].tap do |result|
       i = 1
       each do |el|
         if i <= n
