@@ -1,4 +1,6 @@
 class Monom
+  include Comparable
+
   def self.parse(monom)
     if monom.chr =~ /\d/
       coeff = monom.to_i
@@ -101,6 +103,10 @@ class Polynom
     @monoms.each do |monom|
       derived_polynom << monom.derive
     end
+    
+    zero = Monom.new(0,'',0)
+    derived_polynom.delete(zero)
+    derived_polynom << zero if derived_polynom.size == 0
 
     Polynom.new derived_polynom
   end
@@ -133,12 +139,12 @@ class Polynom
   end
 end
 
-m = Polynom.parse("3 + x^2 + 3x^2 + x")
-#???????????????????????????????????
-#should the following 2 do the same
-#they both work as supposed to but isn't it confusing that they produce different output?
-#when derive and then put in normal form the '0' goes away
-#when put in normal form and then derive it derives monom by monom so the '0' stays
-#???????????????????????????????????
-puts m.derive.normal_form 
-puts m.normal_form.derive
+module Problem
+  def self.find_derivative
+    polynom = Polynom.parse ARGV[0]
+    puts "The derivative of f(x) = #{polynom.normal_form} is:"
+    puts "f\'(x) = #{polynom.derive.normal_form}"
+  end
+end
+
+Problem.find_derivative
