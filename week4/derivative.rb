@@ -103,10 +103,6 @@ class Polynom
     @monoms.each do |monom|
       derived_polynom << monom.derive
     end
-    
-    zero = Monom.new(0,'',0)
-    derived_polynom.delete(zero)
-    derived_polynom << zero if derived_polynom.size == 0
 
     Polynom.new derived_polynom
   end
@@ -134,8 +130,14 @@ class Polynom
         hash[monom.degree] = monom
       end
     end
-    
-    Polynom.new hash.values
+
+    simplyfied = hash.values
+    simplyfied = simplyfied.reject { |monom| monom.coeff == 0 }
+    zero = Monom.new(0,'',0)
+    simplyfied.delete(zero)
+    simplyfied << zero if simplyfied.size == 0
+
+    Polynom.new simplyfied
   end
 end
 
