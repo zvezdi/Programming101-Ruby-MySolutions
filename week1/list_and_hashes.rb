@@ -79,7 +79,7 @@ def max_scalar_product(v1, v2)
 end  
 
 #Max span
-def span(numbers, number) # not working do later
+def span(numbers, number)
   number_encountered = false
   span, current_span = 0, 0
 
@@ -205,5 +205,3 @@ def max_consecutive(items)
 
   longest_consecutive
 end
-
-puts max_span [1, 2, 1, 1, 3]
